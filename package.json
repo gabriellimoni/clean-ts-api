@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "test:staged": "jest"
+    "test:staged": "jest",
+    "check": "npx npm-check -s -u"
   },
   "keywords": [],
   "author": "",
