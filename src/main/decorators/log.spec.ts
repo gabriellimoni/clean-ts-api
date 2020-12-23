@@ -4,7 +4,12 @@ import { LogControllerDecorator } from './log'
 const makeController = (): Controller => {
   class ControllerStub implements Controller {
     async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-      return null
+      return {
+        statusCode: 200,
+        body: {
+          data: 'any'
+        }
+      }
     }
   }
   return new ControllerStub()
@@ -35,5 +40,21 @@ describe('Log Controller Decorator', () => {
     }
     await sut.handle(httpRequest)
     expect(handleSpy).toHaveBeenCalledWith(httpRequest)
+  })
+
+  test('Should return the same result of the controller', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        data: 'any_data'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      body: {
+        data: 'any'
+      }
+    })
   })
 })
