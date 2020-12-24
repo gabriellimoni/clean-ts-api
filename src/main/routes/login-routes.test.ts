@@ -49,5 +49,20 @@ describe('Login Routes', () => {
         })
         .expect(200)
     })
+
+    test('Should return 200 on login', async () => {
+      await accountCollection.insertOne({
+        name: 'Gabriel Limoni',
+        email: 'gabriel.limoni@gmail.com',
+        password: await hash('123', 12)
+      })
+      await request(app)
+        .post('/api/login')
+        .send({
+          email: 'gabriel.limoni@gmail.com',
+          password: 'wrongPass'
+        })
+        .expect(401)
+    })
   })
 })
