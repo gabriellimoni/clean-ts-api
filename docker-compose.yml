@@ -13,9 +13,9 @@ services:
     depends_on: 
       - mongo
     container_name: api-container
-    build: .
-    image: clean-node-api
-    command: npm run debug
+    image: node:12
+    working_dir: /usr/src/clean-node-api
+    command: bash -c "npm install --only=prod && npm run debug"
     restart: always
     volumes:
       - ./dist:/usr/src/clean-node-api/dist
