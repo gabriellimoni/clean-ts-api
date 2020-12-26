@@ -18,7 +18,7 @@ services:
     command: bash -c "npm install --only=prod && npm run debug"
     restart: always
     volumes:
-      - ./dist:/usr/src/clean-node-api/dist
+      - ./dist/:/usr/src/clean-node-api/dist/
       - ./package.json:/usr/src/clean-node-api/package.json
     ports:
       - "5050:5050"
