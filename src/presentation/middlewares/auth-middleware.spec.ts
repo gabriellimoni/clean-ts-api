@@ -36,6 +36,12 @@ const makeFakeAccount = (): AccountModel => ({
   password: 'any_password'
 })
 
+const makeFakeRequest = (): HttpRequest => ({
+  headers: {
+    'x-access-token': 'any_token'
+  }
+})
+
 describe('Auth Middleware', () => {
   test('Should return 403 if no x-access-token exists in headers', async () => {
     const { sut } = makeSut()
@@ -49,12 +55,7 @@ describe('Auth Middleware', () => {
   test('Should call LoadAccountByToken with correct token', async () => {
     const { sut, loadAccountByTokenstub } = makeSut()
     const loadSpy = jest.spyOn(loadAccountByTokenstub, 'load')
-    const httpRequest: HttpRequest = {
-      headers: {
-        'x-access-token': 'any_token'
-      }
-    }
-    await sut.handle(httpRequest)
+    await sut.handle(makeFakeRequest())
     expect(loadSpy).toHaveBeenCalledWith('any_token')
   })
 })
