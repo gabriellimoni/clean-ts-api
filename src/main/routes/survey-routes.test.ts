@@ -18,6 +18,25 @@ const makeFakeRequest = (): any => ({
   }]
 })
 
+const makeAccessToken = async (): Promise<string> => {
+  const res = await accountCollection.insertOne({
+    name: 'any_name',
+    email: 'any_email',
+    password: 123,
+    role: 'admin'
+  })
+  const id = res.ops[0]._id
+  const accessToken = sign({ id }, env.jwtSecret)
+  await accountCollection.updateOne({
+    _id: id
+  }, {
+    $set: {
+      accessToken
+    }
+  })
+  return accessToken
+}
+
 describe('Survey Routes', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL)
@@ -43,21 +62,7 @@ describe('Survey Routes', () => {
     })
 
     test('Should return 204 on add survey with valid x-access-token', async () => {
-      const res = await accountCollection.insertOne({
-        name: 'any_name',
-        email: 'any_email',
-        password: 123,
-        role: 'admin'
-      })
-      const id = res.ops[0]._id
-      const accessToken = sign({ id }, env.jwtSecret)
-      await accountCollection.updateOne({
-        _id: id
-      }, {
-        $set: {
-          accessToken
-        }
-      })
+      const accessToken = await makeAccessToken()
 
       await request(app)
         .post('/api/surveys')
@@ -76,22 +81,9 @@ describe('Survey Routes', () => {
     })
 
     test('Should return 200 on load survey with valid x-access-token', async () => {
-      const res = await accountCollection.insertOne({
-        name: 'any_name',
-        email: 'any_email',
-        password: 123
-      })
-      const id = res.ops[0]._id
-      const accessToken = sign({ id }, env.jwtSecret)
-      await accountCollection.updateOne({
-        _id: id
-      }, {
-        $set: {
-          accessToken
-        }
-      })
+      const accessToken = await makeAccessToken()
 
-      await surveyCollection.insertMany([{
+      await surveyCollection.insertOne({
         question: 'any_question',
         answers: [{
           image: 'any_image',
@@ -101,7 +93,7 @@ describe('Survey Routes', () => {
           answer: 'other_answer'
         }],
         date: new Date()
-      }])
+      })
 
       await request(app)
         .get('/api/surveys')
