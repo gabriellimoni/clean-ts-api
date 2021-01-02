@@ -65,14 +65,14 @@ describe('Survey Routes', () => {
         .send(makeFakeRequest())
         .expect(204)
     })
+  })
 
-    describe('GET /surveys', () => {
-      test('Should return 403 on get survey without x-access-token', async () => {
-        await request(app)
-          .get('/api/surveys')
-          .send(makeFakeRequest())
-          .expect(403)
-      })
+  describe('GET /surveys', () => {
+    test('Should return 403 on get survey without x-access-token', async () => {
+      await request(app)
+        .get('/api/surveys')
+        .send(makeFakeRequest())
+        .expect(403)
     })
   })
 })
